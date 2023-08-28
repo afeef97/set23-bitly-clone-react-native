@@ -8,7 +8,9 @@ export const container = StyleSheet.create({
         justifyContent: "center",
     },
     input: {
-        backgroundColor: "white",
+        backgroundColor: "#fcfcfc",
+        borderWidth: 1,
+        borderColor: "#e3e3e3",
         padding: 10,
         borderRadius: 4,
         width: "100%",
