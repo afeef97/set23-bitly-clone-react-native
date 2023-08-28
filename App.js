@@ -1,20 +1,28 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import Home from "./src/screens/Home";
+import Dashboard from "./src/screens/Dashboard";
+import Login from "./src/screens/Login";
+import Register from "./src/screens/Register";
 
 export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
+    const { Navigator, Screen } = createNativeStackNavigator();
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+    return (
+        <SafeAreaProvider>
+            <NavigationContainer>
+                <Navigator
+                    screenOptions={{
+                        headerShown: false,
+                        animation: "slide_from_right",
+                    }}>
+                    <Screen name="Home" component={Home} />
+                    <Screen name="Dashboard" component={Dashboard} />
+                    <Screen name="Login" component={Login} />
+                    <Screen name="Register" component={Register} />
+                </Navigator>
+            </NavigationContainer>
+        </SafeAreaProvider>
+    );
+}
