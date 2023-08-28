@@ -6,6 +6,7 @@ import Button from "../components/Button";
 import { container } from "../styles";
 import Input from "../components/Input";
 import { StackActions } from "@react-navigation/native";
+import { registerUser } from "../utils/api";
 
 const Register = ({ navigation }) => {
     const {
@@ -13,23 +14,21 @@ const Register = ({ navigation }) => {
         control,
         formState: { errors },
     } = useForm();
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [fullName, setFullName] = useState("");
 
     const onSubmit = (data) => {
-        setEmail(data.email);
-        setPassword(data.password);
-        setFullName(data.fullname);
-        handleRegister();
+        handleRegister(data);
     };
 
     const onError = (errors, e) => {
         console.log(errors);
     };
 
-    handleRegister = () => {
-        console.log(email, password, fullName);
+    handleRegister = (data) => {
+        registerUser({
+            email: data.email,
+            password: data.password,
+            username: data.username,
+        });
     };
 
     toLogin = () => {
@@ -73,6 +72,13 @@ const Register = ({ navigation }) => {
                 <View style={{ width: "80%", gap: 4 }}>
                     <Input
                         control={control}
+                        name="username"
+                        label="Username"
+                        error={errors.username}
+                        inputStyle={container.input}
+                    />
+                    <Input
+                        control={control}
                         name="email"
                         label="Email"
                         error={errors.email}
@@ -94,14 +100,6 @@ const Register = ({ navigation }) => {
                                 value.length >= 8 ||
                                 "Password should be at least 8 characters",
                         }}
-                    />
-                    <Input
-                        control={control}
-                        name="fullname"
-                        label="Full name"
-                        error={errors.fullname}
-                        inputStyle={container.input}
-                        autoCapitalize="words"
                     />
 
                     <Button
