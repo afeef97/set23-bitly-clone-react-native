@@ -1,18 +1,16 @@
 import React, { useState } from "react";
-import { Text, TextInput, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import Button from "../components/Button";
 import { container } from "../styles";
 import Input from "../components/Input";
+import { StackActions } from "@react-navigation/native";
 
-const Register = () => {
+const Register = ({ navigation }) => {
     const {
-        register,
-        setValue,
         handleSubmit,
         control,
-        reset,
         formState: { errors },
     } = useForm();
     const [email, setEmail] = useState("");
@@ -20,7 +18,10 @@ const Register = () => {
     const [fullName, setFullName] = useState("");
 
     const onSubmit = (data) => {
-        console.log(data);
+        setEmail(data.email);
+        setPassword(data.password);
+        setFullName(data.fullname);
+        handleRegister();
     };
 
     const onError = (errors, e) => {
@@ -28,7 +29,11 @@ const Register = () => {
     };
 
     handleRegister = () => {
-        console.log({ email, password, fullName });
+        console.log(email, password, fullName);
+    };
+
+    toLogin = () => {
+        navigation.dispatch(StackActions.replace("Login"));
     };
 
     return (
@@ -40,9 +45,12 @@ const Register = () => {
             }}>
             <View
                 style={{
-                    width: "80%",
+                    width: "90%",
                     justifyContent: "center",
                     alignItems: "center",
+                    backgroundColor: "white",
+                    paddingVertical: 32,
+                    borderRadius: 16,
                 }}>
                 <View
                     style={{
@@ -51,100 +59,54 @@ const Register = () => {
                     <Text style={{ fontSize: 40, textAlign: "center" }}>
                         Sign Up
                     </Text>
-                    <Text style={{ fontSize: 16, textAlign: "center" }}>
-                        Already have an account?{" "}
-                        <Text style={{ color: "blue" }}>Sign In</Text>
-                    </Text>
+                    <View style={{ flexDirection: "row" }}>
+                        <Text style={{ fontSize: 16, textAlign: "center" }}>
+                            Already have an account?{" "}
+                        </Text>
+                        <Pressable onPress={() => toLogin()}>
+                            <Text style={{ color: "blue", fontSize: 16 }}>
+                                Sign In
+                            </Text>
+                        </Pressable>
+                    </View>
                 </View>
                 <View style={{ width: "80%", gap: 4 }}>
-                    <Controller
+                    <Input
                         control={control}
                         name="email"
-                        rules={{
-                            required: "Email is required",
+                        label="Email"
+                        error={errors.email}
+                        inputStyle={container.input}
+                        validate={{
                             validate: (value) =>
                                 value.includes("@") || "Email is not valid",
                         }}
-                        render={({ field: { onChange, onBlur, value } }) => (
-                            <View>
-                                <Text>Email</Text>
-                                <TextInput
-                                    label="Email"
-                                    onBlur={onBlur}
-                                    style={container.input}
-                                    onChangeText={(value) => onChange(value)}
-                                    value={value}
-                                />
-                                {errors.email && (
-                                    <Text style={{ color: "red" }}>
-                                        {errors?.email?.message}
-                                    </Text>
-                                )}
-                            </View>
-                        )}
                     />
-                    <Controller
+                    <Input
                         control={control}
                         name="password"
-                        rules={{
-                            required: "Password is required",
+                        label="Password"
+                        error={errors.password}
+                        inputStyle={container.input}
+                        secure
+                        validate={{
+                            validate: (value) =>
+                                value.length >= 8 ||
+                                "Password should be at least 8 characters",
                         }}
-                        render={({ field: { onChange, onBlur, value } }) => (
-                            <View>
-                                <Text>Password</Text>
-                                <TextInput
-                                    label="Password"
-                                    onBlur={onBlur}
-                                    style={container.input}
-                                    onChangeText={(value) => onChange(value)}
-                                    value={value}
-                                />
-                                {errors.password && (
-                                    <Text style={{ color: "red" }}>
-                                        {errors?.password?.message}
-                                    </Text>
-                                )}
-                            </View>
-                        )}
                     />
-                    <Controller
+                    <Input
                         control={control}
                         name="fullname"
-                        rules={{
-                            required: "Full name is required",
-                        }}
-                        render={({ field: { onChange, onBlur, value } }) => (
-                            <View>
-                                <Text>Full Name</Text>
-                                <TextInput
-                                    label="Full Name"
-                                    onBlur={onBlur}
-                                    style={container.input}
-                                    onChangeText={(value) => onChange(value)}
-                                    value={value}
-                                />
-                                {errors.fullname && (
-                                    <Text style={{ color: "red" }}>
-                                        {errors?.fullname?.message}
-                                    </Text>
-                                )}
-                            </View>
-                        )}
+                        label="Full name"
+                        error={errors.fullname}
+                        inputStyle={container.input}
+                        autoCapitalize="words"
                     />
-                    <Input />
-                    {/* <View>
-                        <Text>Full name</Text>
-                        <View>
-                            <TextInput
-                                onChangeText={setFullName}
-                                value={fullName}
-                                style={container.input}
-                                placeholder="e.g. Ahmad Farah"
-                                placeholderTextColor="gray"
-                            />
-                        </View>
-                    </View> */}
-                    <Button onPress={handleSubmit(onSubmit, onError)}>
+
+                    <Button
+                        buttonStyle={{ marginTop: 16, paddingVertical: 14 }}
+                        onPress={handleSubmit(onSubmit, onError)}>
                         SIGN UP
                     </Button>
                 </View>
