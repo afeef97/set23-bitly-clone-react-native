@@ -1,4 +1,4 @@
-import { View, Text, TouchableHighlight } from "react-native";
+import { Text, TouchableHighlight } from "react-native";
 import React from "react";
 
 const Button = ({
@@ -15,13 +15,14 @@ const Button = ({
                 padding: 10,
                 borderRadius: 4,
                 width: "100%",
-                ...props.style,
+                ...props.buttonStyle,
             }}
             {...props}>
             <Text
                 style={{
                     color: textColor,
                     textAlign: "center",
+                    ...props.textStyle,
                 }}>
                 {children}
             </Text>
