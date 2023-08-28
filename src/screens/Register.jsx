@@ -9,6 +9,7 @@ import { StackActions } from "@react-navigation/native";
 import { registerUser } from "../utils/api";
 
 const Register = ({ navigation }) => {
+    const [registerState, setRegisterState] = useState("idle"); // ["idle", "loading", "success", "error"
     const {
         handleSubmit,
         control,
@@ -23,12 +24,21 @@ const Register = ({ navigation }) => {
         console.log(errors);
     };
 
-    handleRegister = (data) => {
-        registerUser({
-            email: data.email,
-            password: data.password,
-            username: data.username,
-        });
+    handleRegister = async (data) => {
+        try {
+            setRegisterState("loading");
+            const registerRes = await registerUser({
+                email: data.email,
+                password: data.password,
+                username: data.username,
+            });
+            console.log(registerRes);
+            setRegisterState("success");
+        } catch (error) {
+            const errorRes = error.response?.data;
+            console.error(errorRes);
+            setRegisterState("error");
+        }
     };
 
     toLogin = () => {
@@ -105,7 +115,9 @@ const Register = ({ navigation }) => {
                     <Button
                         buttonStyle={{ marginTop: 16, paddingVertical: 14 }}
                         onPress={handleSubmit(onSubmit, onError)}>
-                        SIGN UP
+                        {registerState === "loading"
+                            ? "Registering..."
+                            : "Sign Up"}
                     </Button>
                 </View>
             </View>
