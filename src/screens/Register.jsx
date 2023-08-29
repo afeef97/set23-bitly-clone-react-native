@@ -13,6 +13,7 @@ const Register = ({ navigation }) => {
     const {
         handleSubmit,
         control,
+        setError,
         formState: { errors },
     } = useForm();
 
@@ -32,12 +33,19 @@ const Register = ({ navigation }) => {
                 password: data.password,
                 username: data.username,
             });
-            console.log(registerRes);
+            console.log("registerRes", registerRes);
             setRegisterState("success");
         } catch (error) {
-            const errorRes = error.response?.data;
-            console.error(errorRes);
+            const errorRes = error.response?.data.error.errors;
+            console.log("errorRes", errorRes);
             setRegisterState("error");
+            if (Array.isArray(errorRes)) {
+                errorRes.forEach((err) => {
+                    setError(err.path, {
+                        message: err.message,
+                    });
+                });
+            }
         }
     };
 
@@ -113,6 +121,7 @@ const Register = ({ navigation }) => {
                     />
 
                     <Button
+                        disabled={registerState === "loading"}
                         buttonStyle={{ marginTop: 16, paddingVertical: 14 }}
                         onPress={handleSubmit(onSubmit, onError)}>
                         {registerState === "loading"

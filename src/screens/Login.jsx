@@ -1,18 +1,21 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { set, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { container } from "../styles";
 import { StackActions } from "@react-navigation/native";
 import Input from "../components/Input";
 import Button from "../components/Button";
 import { loginUser } from "../utils/api";
+import { AuthContext } from "../context";
 
 const Login = ({ navigation }) => {
     const [loginState, setLoginState] = useState("idle");
+    const { setJwt } = useContext(AuthContext);
     const {
         handleSubmit,
         control,
+        setError,
         formState: { errors },
     } = useForm();
 
@@ -31,12 +34,19 @@ const Login = ({ navigation }) => {
                 identifier: data.identifier,
                 password: data.password,
             });
-            console.log(loginRes.data);
+            console.log(loginRes);
+            setJwt(loginRes.jwt);
             setLoginState("success");
         } catch (error) {
             const errorRes = error.response?.data;
-            console.error(errorRes);
+            console.log(errorRes);
             setLoginState("error");
+            setError("identifier", {
+                message: errorRes.error || errorRes.message,
+            });
+            setError("password", {
+                message: errorRes.error || errorRes.message,
+            });
         }
     };
 
