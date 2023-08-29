@@ -3,7 +3,6 @@ import React from "react";
 
 const Button = ({
     underlay = "#fa8f50",
-    textColor = "white",
     children = "Button",
     variant = "filled",
     ...props
@@ -14,6 +13,7 @@ const Button = ({
         case "filled":
             variantStyle = {
                 backgroundColor: "#fd8640",
+                borderRadius: 8,
             };
             textVariantStyle = {
                 color: "white",
@@ -29,6 +29,9 @@ const Button = ({
         case "ghost":
             variantStyle = {
                 backgroundColor: "transparent",
+            };
+            textVariantStyle = {
+                color: "#fd8640",
             };
             break;
         default:
@@ -48,7 +51,7 @@ const Button = ({
             {...props}>
             <Text
                 style={{
-                    color: textColor,
+                    ...textVariantStyle,
                     textAlign: "center",
                     ...props.textStyle,
                 }}>

@@ -6,14 +6,51 @@ import { container } from "../styles";
 
 const Home = ({ navigation }) => {
     return (
-        <SafeAreaView style={container.mainCentered}>
-            <Text style={{ fontSize: 40, marginBottom: 4 }}>Home</Text>
+        <SafeAreaView
+            style={{
+                ...container.main,
+                justifyContent: "center",
+                alignItems: "center",
+            }}>
+            <Text style={{ fontSize: 64, marginBottom: 4, color: "white" }}>
+                bitly
+            </Text>
 
-            <View style={{ width: "50%", alignItems: "center", gap: 4 }}>
-                <Button onPress={() => navigation.navigate("Login")}>
+            <View
+                style={{
+                    width: "50%",
+                    alignItems: "center",
+                    gap: 4,
+                    backgroundColor: "white",
+                    padding: 24,
+                    borderRadius: 8,
+                }}>
+                <Button
+                    variant="filled"
+                    buttonStyle={{
+                        width: "100%",
+                        backgroundColor: "#fd8640",
+                        borderRadius: 8,
+                        padding: 8,
+                        margin: 8,
+                        textAlign: "center",
+                        color: "white",
+                    }}
+                    onPress={() => navigation.navigate("Login")}>
                     Login
                 </Button>
-                <Button onPress={() => navigation.navigate("Register")}>
+                <Button
+                    variant="filled"
+                    buttonStyle={{
+                        width: "100%",
+                        backgroundColor: "#fd8640",
+                        borderRadius: 8,
+                        padding: 8,
+                        margin: 8,
+                        textAlign: "center",
+                        color: "white",
+                    }}
+                    onPress={() => navigation.navigate("Register")}>
                     Register
                 </Button>
             </View>
