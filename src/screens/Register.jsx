@@ -54,7 +54,12 @@ const Register = ({ navigation }) => {
     };
 
     return (
-        <SafeAreaView style={container.mainCentered}>
+        <SafeAreaView
+            style={{
+                ...container.main,
+                justifyContent: "center",
+                alignItems: "center",
+            }}>
             <View style={container.authPanel}>
                 <View
                     style={{

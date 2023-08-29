@@ -1,11 +1,9 @@
 import { StyleSheet } from "react-native";
 
 export const container = StyleSheet.create({
-    mainCentered: {
+    main: {
         height: "100%",
         backgroundColor: "#fd8640",
-        alignItems: "center",
-        justifyContent: "center",
     },
     authPanel: {
         width: "90%",
