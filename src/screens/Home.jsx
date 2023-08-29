@@ -2,15 +2,11 @@ import React from "react";
 import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Button from "../components/Button";
+import { container } from "../styles";
 
 const Home = ({ navigation }) => {
     return (
-        <SafeAreaView
-            style={{
-                justifyContent: "center",
-                alignItems: "center",
-                minHeight: "100%",
-            }}>
+        <SafeAreaView style={container.mainCentered}>
             <Text style={{ fontSize: 40, marginBottom: 4 }}>Home</Text>
 
             <View style={{ width: "50%", alignItems: "center", gap: 4 }}>

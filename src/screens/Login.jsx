@@ -55,21 +55,8 @@ const Login = ({ navigation }) => {
     };
 
     return (
-        <SafeAreaView
-            style={{
-                justifyContent: "center",
-                alignItems: "center",
-                height: "100%",
-            }}>
-            <View
-                style={{
-                    width: "90%",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    backgroundColor: "white",
-                    paddingVertical: 32,
-                    borderRadius: 16,
-                }}>
+        <SafeAreaView style={container.mainCentered}>
+            <View style={container.authPanel}>
                 <View
                     style={{
                         marginBottom: 16,
@@ -81,11 +68,12 @@ const Login = ({ navigation }) => {
                         <Text style={{ fontSize: 16, textAlign: "center" }}>
                             Don't have an account yet?{" "}
                         </Text>
-                        <Pressable onPress={() => toRegister()}>
-                            <Text style={{ color: "blue", fontSize: 16 }}>
-                                Sign Up
-                            </Text>
-                        </Pressable>
+                        <Button
+                            variant="ghost"
+                            onPress={() => toRegister()}
+                            textStyle={{ fontSize: 16 }}>
+                            Sign Up
+                        </Button>
                     </View>
                 </View>
                 <View style={{ width: "80%", gap: 4 }}>
