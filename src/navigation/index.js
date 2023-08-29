@@ -4,9 +4,9 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { AuthContext } from "../context";
 import { getValueFor, setValueFor } from "../utils/helper/secureStore";
 import Home from "../screens/Home";
-import Dashboard from "../screens/Dashboard";
 import Login from "../screens/Login";
 import Register from "../screens/Register";
+import AuthNavigator from "./AuthNavigator";
 
 const AppNavigator = () => {
     const { Navigator, Screen } = createNativeStackNavigator();
@@ -34,7 +34,7 @@ const AppNavigator = () => {
                     animation: "slide_from_right",
                 }}>
                 {jwt ? (
-                    <Screen name="Dashboard" component={Dashboard} />
+                    <Screen name="AuthStack" component={AuthNavigator} />
                 ) : (
                     <>
                         <Screen name="Home" component={Home} />
