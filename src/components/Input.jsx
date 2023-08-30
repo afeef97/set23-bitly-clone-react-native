@@ -27,6 +27,7 @@ const Input = ({
                         style={{ ...props.inputStyle }}
                         onChangeText={(value) => onChange(value)}
                         value={value}
+                        placeholder={props.placeholder}
                         autoCapitalize={autoCapitalize}
                         secureTextEntry={props.secure}
                     />
