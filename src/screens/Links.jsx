@@ -166,6 +166,7 @@ const AddLinkModal = ({ token, modalVisible, setModalVisible }) => {
         handleSubmit,
         control,
         formState: { errors },
+        setError,
     } = useForm();
 
     const onSubmit = (data) => {
@@ -184,8 +185,11 @@ const AddLinkModal = ({ token, modalVisible, setModalVisible }) => {
             setModalVisible(!modalVisible);
         } catch (error) {
             const errorRes = error.response?.data;
-            console.log(errorRes);
+            console.log(errorRes.error);
             setAddLinkState("error");
+            setError("link", {
+                message: `URL ${errorRes.error.errors[0].msg}`,
+            });
         }
     };
 
