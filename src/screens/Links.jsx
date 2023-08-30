@@ -1,5 +1,13 @@
 import React, { useContext, useEffect, useState } from "react";
-import { FlatList, Linking, Modal, Pressable, Text, View } from "react-native";
+import {
+    FlatList,
+    Linking,
+    Modal,
+    Pressable,
+    RefreshControl,
+    Text,
+    View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AuthContext } from "../context";
 import useGetAllLinks from "../utils/hooks/useGetAllLinks";
@@ -11,21 +19,29 @@ import { addLink, deleteLink } from "../utils/api";
 import Input from "../components/Input";
 import Button from "../components/Button";
 
-const Links = () => {
+const Links = ({ navigation }) => {
     const { jwt } = useContext(AuthContext);
     const [modalVisible, setModalVisible] = useState(false);
     const { links, fetchLinks } = useGetAllLinks(jwt);
     const [deleteLinkState, setDeleteLinkState] = useState("idle");
+    const [refreshing, setRefreshing] = useState(false);
+
+    const onRefresh = React.useCallback(() => {
+        setRefreshing(true);
+        fetchLinks();
+        setRefreshing(false);
+    }, []);
 
     useEffect(() => {
-        if (!modalVisible || deleteLinkState === "success") {
+        if (!modalVisible || deleteLinkState === "success" || refreshing) {
             fetchLinks();
         }
-    }, [modalVisible, deleteLinkState]);
+    }, [modalVisible, deleteLinkState, refreshing]);
 
     return (
         <SafeAreaView style={{ ...container.main, paddingHorizontal: 16 }}>
             <FlatList
+                keyboardShouldPersistTaps="handled"
                 ListHeaderComponent={() => (
                     <>
                         <View
@@ -61,10 +77,18 @@ const Links = () => {
                     </>
                 )}
                 data={links}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                    />
+                }
                 renderItem={({ item }) => (
                     <LinkCard
                         deleteLinkState={deleteLinkState}
                         setDeleteLinkState={setDeleteLinkState}
+                        setRefreshing={setRefreshing}
+                        navigation={navigation}
                         link={item}
                     />
                 )}
@@ -73,9 +97,15 @@ const Links = () => {
     );
 };
 
-const LinkCard = ({ deleteLinkState, setDeleteLinkState, link }) => {
-    const BASE_URL = process.env.EXPO_PUBLIC_BASE_URL;
+const LinkCard = ({
+    deleteLinkState,
+    setDeleteLinkState,
+    link,
+    navigation,
+    setRefreshing,
+}) => {
     const { jwt } = useContext(AuthContext);
+    const { fetchLinks } = useGetAllLinks(jwt);
 
     const handleDeleteLink = async (id) => {
         try {
@@ -90,7 +120,14 @@ const LinkCard = ({ deleteLinkState, setDeleteLinkState, link }) => {
     };
 
     const handleOpenLink = async (slug) => {
-        Linking.openURL(`${BASE_URL}/${slug}`);
+        try {
+            navigation.navigate("Web", { slug: slug });
+            setRefreshing(true);
+            await fetchLinks();
+            setRefreshing(false);
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     return (
@@ -162,7 +199,7 @@ const AddLinkModal = ({ token, modalVisible, setModalVisible }) => {
 
     return (
         <Modal
-            animationType="slide"
+            animationType="fade"
             transparent={true}
             visible={modalVisible}
             onRequestClose={() => {
@@ -170,68 +207,80 @@ const AddLinkModal = ({ token, modalVisible, setModalVisible }) => {
             }}>
             <View
                 style={{
-                    backgroundColor: "white",
-                    padding: 16,
-                    borderRadius: 8,
-                    marginBottom: 8,
-                    width: "100%",
+                    backgroundColor: "black",
                     height: "100%",
-                    justifyContent: "space-between",
+                    opacity: 0.9,
+                    justifyContent: "center",
+                    alignItems: "center",
                 }}>
                 <View
                     style={{
-                        flexDirection: "row",
+                        backgroundColor: "white",
+                        padding: 16,
+                        borderRadius: 8,
+                        marginBottom: 8,
+                        opacity: 1,
+                        width: "80%",
                         justifyContent: "space-between",
                     }}>
-                    <Text
+                    <View
                         style={{
-                            fontSize: 20,
+                            flexDirection: "row",
+                            justifyContent: "space-between",
                         }}>
-                        Add a new link
-                    </Text>
-                    <Pressable onPress={() => setModalVisible(!modalVisible)}>
-                        <MaterialIcons name="close" size={24} color="black" />
-                    </Pressable>
+                        <Text
+                            style={{
+                                fontSize: 20,
+                            }}>
+                            Add a new link
+                        </Text>
+                        <Pressable
+                            onPress={() => setModalVisible(!modalVisible)}>
+                            <MaterialIcons
+                                name="close"
+                                size={24}
+                                color="black"
+                            />
+                        </Pressable>
+                    </View>
+                    <View style={{ marginTop: 16 }}>
+                        <Input
+                            control={control}
+                            label={"URL"}
+                            name="link"
+                            placeholder="https://example.com"
+                            inputStyle={{
+                                backgroundColor: "#f0f0f0",
+                                padding: 8,
+                            }}
+                            textStyle={{
+                                fontSize: 24,
+                            }}
+                            rules={{
+                                required: {
+                                    value: true,
+                                    message: "Link is required",
+                                },
+                            }}
+                            error={errors.link}
+                        />
+                        <Button
+                            disabled={addLinkState === "loading"}
+                            variant="filled"
+                            buttonStyle={{
+                                marginTop: 16,
+                                padding: 12,
+                                borderRadius: 8,
+                            }}
+                            textStyle={{
+                                fontSize: 16,
+                            }}
+                            onPress={handleSubmit(onSubmit, onError)}>
+                            Add Link
+                        </Button>
+                    </View>
+                    <View></View>
                 </View>
-
-                <View style={{ marginTop: 16 }}>
-                    <Input
-                        control={control}
-                        label={"URL"}
-                        name="link"
-                        placeholder="https://example.com"
-                        inputStyle={{
-                            backgroundColor: "#f0f0f0",
-                            padding: 8,
-                        }}
-                        textStyle={{
-                            fontSize: 24,
-                        }}
-                        rules={{
-                            required: {
-                                value: true,
-                                message: "Link is required",
-                            },
-                        }}
-                        error={errors.link}
-                    />
-                    <Button
-                        disabled={addLinkState === "loading"}
-                        variant="filled"
-                        buttonStyle={{
-                            marginTop: 16,
-                            padding: 12,
-                            borderRadius: 8,
-                        }}
-                        textStyle={{
-                            fontSize: 16,
-                        }}
-                        onPress={handleSubmit(onSubmit, onError)}>
-                        Add Link
-                    </Button>
-                </View>
-
-                <View></View>
             </View>
         </Modal>
     );

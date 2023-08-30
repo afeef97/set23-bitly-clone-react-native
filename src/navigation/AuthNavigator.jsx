@@ -3,8 +3,9 @@ import Dashboard from "../screens/Dashboard";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Links from "../screens/Links";
 import Account from "../screens/Account";
-import { Text } from "react-native";
+import { Text, View } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
+import Web from "../screens/Web";
 
 const Tab = createBottomTabNavigator();
 
@@ -82,6 +83,17 @@ const AuthNavigator = () => {
                             color={focused ? "orange" : "black"}
                             style={{ marginBottom: -6 }}
                         />
+                    ),
+                }}
+            />
+            <Tab.Screen
+                name="Web"
+                component={Web}
+                options={{
+                    headerShown: true,
+                    tabBarIconStyle: { display: "none" },
+                    tabBarButton: () => (
+                        <View style={{ width: 0, height: 0 }}></View>
                     ),
                 }}
             />
