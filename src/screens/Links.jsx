@@ -1,13 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import {
-    FlatList,
-    Linking,
-    Modal,
-    Pressable,
-    RefreshControl,
-    Text,
-    View,
-} from "react-native";
+import { FlatList, Pressable, RefreshControl, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AuthContext } from "../context";
 import useGetAllLinks from "../utils/hooks/useGetAllLinks";
@@ -18,6 +10,7 @@ import { useForm } from "react-hook-form";
 import { addLink, deleteLink } from "../utils/api";
 import Input from "../components/Input";
 import Button from "../components/Button";
+import LinkModal from "../components/LinkModal";
 
 const Links = ({ navigation }) => {
     const { jwt } = useContext(AuthContext);
@@ -123,7 +116,7 @@ const LinkCard = ({
         try {
             navigation.navigate("Web", { slug: slug });
             setRefreshing(true);
-            await fetchLinks();
+            await new Promise((resolve) => setTimeout(resolve, 1500));
             setRefreshing(false);
         } catch (error) {
             console.log(error);
@@ -172,7 +165,6 @@ const AddLinkModal = ({ token, modalVisible, setModalVisible }) => {
     const {
         handleSubmit,
         control,
-        setError,
         formState: { errors },
     } = useForm();
 
@@ -198,91 +190,47 @@ const AddLinkModal = ({ token, modalVisible, setModalVisible }) => {
     };
 
     return (
-        <Modal
-            animationType="fade"
-            transparent={true}
-            visible={modalVisible}
-            onRequestClose={() => {
-                setModalVisible(!modalVisible);
-            }}>
-            <View
-                style={{
-                    backgroundColor: "black",
-                    height: "100%",
-                    opacity: 0.9,
-                    justifyContent: "center",
-                    alignItems: "center",
-                }}>
-                <View
-                    style={{
-                        backgroundColor: "white",
-                        padding: 16,
+        <LinkModal
+            modalVisible={modalVisible}
+            setModalVisible={setModalVisible}
+            title="Add Link">
+            <View style={{ marginTop: 16 }}>
+                <Input
+                    control={control}
+                    label={"URL"}
+                    name="link"
+                    placeholder="https://example.com"
+                    inputStyle={{
+                        backgroundColor: "#f0f0f0",
+                        padding: 8,
+                    }}
+                    textStyle={{
+                        fontSize: 20,
+                    }}
+                    rules={{
+                        required: {
+                            value: true,
+                            message: "Link is required",
+                        },
+                    }}
+                    error={errors.link}
+                />
+                <Button
+                    disabled={addLinkState === "loading"}
+                    variant="filled"
+                    buttonStyle={{
+                        marginTop: 16,
+                        padding: 12,
                         borderRadius: 8,
-                        marginBottom: 8,
-                        opacity: 1,
-                        width: "80%",
-                        justifyContent: "space-between",
-                    }}>
-                    <View
-                        style={{
-                            flexDirection: "row",
-                            justifyContent: "space-between",
-                        }}>
-                        <Text
-                            style={{
-                                fontSize: 20,
-                            }}>
-                            Add a new link
-                        </Text>
-                        <Pressable
-                            onPress={() => setModalVisible(!modalVisible)}>
-                            <MaterialIcons
-                                name="close"
-                                size={24}
-                                color="black"
-                            />
-                        </Pressable>
-                    </View>
-                    <View style={{ marginTop: 16 }}>
-                        <Input
-                            control={control}
-                            label={"URL"}
-                            name="link"
-                            placeholder="https://example.com"
-                            inputStyle={{
-                                backgroundColor: "#f0f0f0",
-                                padding: 8,
-                            }}
-                            textStyle={{
-                                fontSize: 24,
-                            }}
-                            rules={{
-                                required: {
-                                    value: true,
-                                    message: "Link is required",
-                                },
-                            }}
-                            error={errors.link}
-                        />
-                        <Button
-                            disabled={addLinkState === "loading"}
-                            variant="filled"
-                            buttonStyle={{
-                                marginTop: 16,
-                                padding: 12,
-                                borderRadius: 8,
-                            }}
-                            textStyle={{
-                                fontSize: 16,
-                            }}
-                            onPress={handleSubmit(onSubmit, onError)}>
-                            Add Link
-                        </Button>
-                    </View>
-                    <View></View>
-                </View>
+                    }}
+                    textStyle={{
+                        fontSize: 16,
+                    }}
+                    onPress={handleSubmit(onSubmit, onError)}>
+                    Add Link
+                </Button>
             </View>
-        </Modal>
+        </LinkModal>
     );
 };
 
